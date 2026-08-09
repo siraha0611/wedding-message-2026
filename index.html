@@ -453,7 +453,28 @@
 
     .message-card p { margin: 0; }
 
-    .message-card p + p { margin-top: 1em; }
+    .message-card p:not(.sender) {
+      font-family: var(--mincho);
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 2.15;
+      letter-spacing: .05em;
+    }
+
+    .message-card p + p { margin-top: 1.15em; }
+
+    .message-card p:not(.sender),
+    .message-card .sender {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity .85s ease, transform .85s cubic-bezier(.2, .7, .25, 1);
+    }
+
+    .message-card.is-visible p:not(.sender),
+    .message-card.is-visible .sender {
+      opacity: 1;
+      transform: none;
+    }
 
     .sender {
       margin-top: 19px !important;
@@ -575,6 +596,7 @@
       body { font-size: 16px; }
       .section-inner { width: min(100% - 80px, 720px); }
       .message-card { padding: 40px 42px 32px; }
+      .message-card p:not(.sender) { font-size: 19px; }
       .message-list { gap: 26px; }
       .hero::before { inset: 28px; }
     }
@@ -588,6 +610,7 @@
         transition-delay: 0ms !important;
       }
       .message-card { opacity: 1; transform: none; }
+      .message-card p { opacity: 1; transform: none; }
     }
   </style>
 </head>
@@ -629,23 +652,33 @@
         <h2 class="section-title" id="messages-title">みんなからの<br>お祝いメッセージ</h2>
         <div class="message-list">
           <article class="message-card">
-            <p>由里子さん、真さん、ご入籍おめでとうございます。ふたりで築いていく新しい家庭が、笑顔あふれる温かい場所になりますように。いつまでも仲良く、末永くお幸せに。</p>
+            <p>由里子さん、真さん、ご入籍おめでとうございます。</p>
+            <p>ふたりで築いていく新しい家庭が、笑顔あふれる温かい場所になりますように。</p>
+            <p>いつまでも仲良く、末永くお幸せに。</p>
             <p class="sender">── 勝俣父母より</p>
           </article>
           <article class="message-card">
-            <p>ご結婚おめでとうございます！ふたりの門出を家族みんなでお祝いしています。これからは喜びも大変なことも分かち合って、素敵な家庭を築いてください。</p>
+            <p>ご結婚おめでとうございます！</p>
+            <p>ふたりの門出を家族みんなでお祝いしています。</p>
+            <p>これからは喜びも大変なことも分かち合って、素敵な家庭を築いてください。</p>
             <p class="sender">── 河西家より</p>
           </article>
           <article class="message-card">
-            <p>由里子ちゃん、正ちゃん、おめでとう！ふたりが並んでいる姿を想像するだけで嬉しくなります。今度ぜひふたりの話をたくさん聞かせてね。</p>
+            <p>由里子ちゃん、正ちゃん、おめでとう！</p>
+            <p>ふたりが並んでいる姿を想像するだけで嬉しくなります。</p>
+            <p>今度ぜひふたりの話をたくさん聞かせてね。</p>
             <p class="sender">── モモナ・ヒロより</p>
           </article>
           <article class="message-card">
-            <p>ご入籍おめでとうございます🎉 これからのふたりの毎日が、楽しいことでいっぱいになりますように。落ち着いたらみんなでお祝いさせてください！</p>
+            <p>ご入籍おめでとうございます🎉</p>
+            <p>これからのふたりの毎日が、楽しいことでいっぱいになりますように。</p>
+            <p>落ち着いたらみんなでお祝いさせてください！</p>
             <p class="sender">── ホナミ・コトミより</p>
           </article>
           <article class="message-card">
-            <p>おめでとうございます。おふたりの新しい人生の始まりを、心からお祝い申し上げます。健康第一で、支え合いながら歩んでいってください。</p>
+            <p>おめでとうございます。</p>
+            <p>おふたりの新しい人生の始まりを、心からお祝い申し上げます。</p>
+            <p>健康第一で、支え合いながら歩んでいってください。</p>
             <p class="sender">── 邦広家より</p>
           </article>
           <article class="message-card">
@@ -821,6 +854,11 @@
       openButton.addEventListener("touchend", openMessage, { passive: false });
 
       const cards = document.querySelectorAll(".message-card");
+      cards.forEach((card) => {
+        card.querySelectorAll("p").forEach((line, index) => {
+          line.style.transitionDelay = `${(.2 + index * .45).toFixed(2)}s`;
+        });
+      });
       if (reducedMotion.matches || !("IntersectionObserver" in window)) {
         cards.forEach((card) => card.classList.add("is-visible"));
       } else {
