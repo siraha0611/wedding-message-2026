@@ -665,7 +665,8 @@
       letter-spacing: .12em;
     }
 
-    .video-frame iframe { width: 100%; height: 100%; border: 0; }
+    .video-frame iframe,
+    .video-frame video { display: block; width: 100%; height: 100%; border: 0; object-fit: cover; }
 
     /* Closing */
     .closing {
@@ -935,10 +936,10 @@
         <p class="eyebrow reveal-target" style="text-align:center">VIDEO</p>
         <h2 class="section-title reveal-target" id="video-title">ビデオメッセージ</h2>
         <div class="video-frame reveal-target">
-          <div class="video-placeholder">
-            <span class="play-mark" aria-hidden="true"></span>
-            <p>動画は準備中です</p>
-          </div>
+          <video controls playsinline preload="metadata" poster="videos/message_1_poster.jpg">
+            <source src="videos/message_1.mp4" type="video/mp4">
+            お使いのブラウザは動画再生に対応していません。
+          </video>
           <!--
             動画の準備ができたら、上の .video-placeholder を削除し、
             下記 iframe のコメントアウトを解除して VIDEO_ID を差し替えてください。
