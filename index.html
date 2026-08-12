@@ -273,6 +273,14 @@
 
     @keyframes breathe { 0%, 100% { opacity: .42; } 50% { opacity: 1; } }
 
+    .tap-note {
+      margin: 12px 0 0;
+      color: #967716;
+      font-family: var(--mincho);
+      font-size: 11px;
+      letter-spacing: .12em;
+    }
+
     #confetti-canvas {
       position: fixed;
       inset: 0;
@@ -717,26 +725,35 @@
       right: max(18px, env(safe-area-inset-right));
       bottom: max(18px, calc(env(safe-area-inset-bottom) + 12px));
       z-index: 900;
-      display: grid;
-      place-items: center;
-      width: 48px;
-      height: 48px;
-      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-width: 48px;
+      height: 44px;
+      padding: 0 16px;
       color: #fffdfb;
       border: 1px solid rgba(255, 255, 255, .72);
-      border-radius: 50%;
+      border-radius: 24px;
       background: linear-gradient(145deg, #d04c69, #a92f4c);
       box-shadow: 0 8px 24px rgba(74, 50, 39, .22), 0 0 0 4px rgba(201, 162, 39, .12);
       cursor: pointer;
-      transition: transform .25s ease, box-shadow .25s ease, opacity .3s ease;
+      transition: transform .25s ease, box-shadow .25s ease, opacity .3s ease, background .25s ease;
       -webkit-tap-highlight-color: transparent;
+    }
+
+    .music-toggle.is-muted { background: linear-gradient(145deg, #a39289, #7d6c63); }
+
+    .music-state {
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
     }
 
     .music-toggle:hover { transform: translateY(-2px); box-shadow: 0 11px 27px rgba(74, 50, 39, .25), 0 0 0 4px rgba(201, 162, 39, .15); }
     .music-toggle:focus-visible { outline: 3px solid rgba(201, 162, 39, .5); outline-offset: 3px; }
-    .music-note { font-family: Georgia, serif; font-size: 23px; line-height: 1; transform: translateY(-1px); }
-    .music-slash { position: absolute; width: 24px; height: 2px; border-radius: 2px; background: #fffdfb; opacity: 0; transform: rotate(-45deg); transition: opacity .2s; }
-    .music-toggle.is-muted .music-slash { opacity: 1; }
+    .music-note { font-family: Georgia, serif; font-size: 21px; line-height: 1; transform: translateY(-1px); }
     .music-toggle[hidden] { display: none; }
 
     @media (min-width: 700px) {
@@ -780,6 +797,7 @@
         <span class="seal" aria-hidden="true">寿</span>
       </button>
       <p class="tap-guide">タップして開く</p>
+      <p class="tap-note">♪ 音楽が流れます（あとでOFFにできます）</p>
     </div>
   </div>
 
@@ -960,7 +978,7 @@
 
   <button class="music-toggle" id="music-toggle" type="button" aria-label="BGMをミュート" aria-pressed="false" hidden>
     <span class="music-note" aria-hidden="true">♪</span>
-    <span class="music-slash" aria-hidden="true"></span>
+    <span class="music-state" id="music-state">ON</span>
   </button>
 
   <script>
@@ -971,6 +989,7 @@
       const openButton = document.getElementById("open-envelope");
       const hero = document.getElementById("hero");
       const musicToggle = document.getElementById("music-toggle");
+      const musicState = document.getElementById("music-state");
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
       const pendingTimers = new Set();
       let hasOpened = false;
@@ -1122,6 +1141,7 @@
         musicToggle.classList.remove("is-muted");
         musicToggle.setAttribute("aria-pressed", "false");
         musicToggle.setAttribute("aria-label", "BGMをミュート");
+        musicState.textContent = "ON";
         music.context.resume().then(() => {
           if (!music.muted) startScheduler();
         }).catch(() => {});
@@ -1137,6 +1157,7 @@
         musicToggle.classList.toggle("is-muted", music.muted);
         musicToggle.setAttribute("aria-pressed", String(music.muted));
         musicToggle.setAttribute("aria-label", music.muted ? "BGMを再生" : "BGMをミュート");
+        musicState.textContent = music.muted ? "OFF" : "ON";
 
         if (music.muted) {
           window.clearInterval(music.intervalId);
