@@ -321,6 +321,22 @@
     .floral-art.is-mid-left { top: 45%; left: -70px; transform: rotate(-18deg); }
     .floral-art.is-mid-right { top: 68%; right: -72px; transform: scaleX(-1) rotate(-18deg); }
 
+    .floral-art.is-bouquet-top {
+      top: 4px;
+      left: 50%;
+      width: clamp(170px, 46vw, 250px);
+      transform: translateX(-50%);
+    }
+
+    .floral-art.is-bouquet-bottom {
+      bottom: 8px;
+      left: 50%;
+      width: clamp(150px, 40vw, 220px);
+      transform: translateX(-50%);
+    }
+
+    .section-decor .floral-bouquet { opacity: .22; }
+
     .section-divider {
       position: relative;
       z-index: 4;
@@ -853,6 +869,37 @@
           <circle cx="132" cy="73" r="4"/><circle cx="225" cy="77" r="3.5"/><circle cx="76" cy="151" r="3"/>
         </g>
       </symbol>
+      <symbol id="floral-bouquet" viewBox="0 0 300 300">
+        <g fill="none" stroke="#c7385a" stroke-width="3" opacity=".5" stroke-linecap="round">
+          <path d="M150 214C128 200 112 214 128 228C140 238 148 226 150 216"/>
+          <path d="M150 214C172 200 188 214 172 228C160 238 152 226 150 216"/>
+          <path d="M148 220C140 244 136 258 128 272"/>
+          <path d="M152 220C160 244 164 258 174 270"/>
+        </g>
+        <g fill="none" stroke="url(#gold-wash)" stroke-linecap="round" stroke-width="2">
+          <path d="M150 212C148 180 150 150 150 128"/>
+          <path d="M148 210C132 184 118 166 112 150"/>
+          <path d="M152 210C168 184 182 168 190 152"/>
+          <path d="M148 212C138 196 134 188 132 184"/>
+          <path d="M152 212C162 196 166 190 168 182"/>
+        </g>
+        <g fill="#c9a227" opacity=".55">
+          <path d="M136 190C122 184 118 174 119 170C130 173 135 180 136 190Z"/>
+          <path d="M166 188C180 182 184 172 183 168C172 171 167 178 166 188Z"/>
+          <path d="M143 160C131 152 129 142 131 138C141 143 144 150 143 160Z"/>
+          <path d="M159 158C171 150 173 140 171 136C161 141 158 148 159 158Z"/>
+        </g>
+        <g>
+          <g transform="translate(150 108) scale(1.05)"><use href="#floral-blossom" width="60" height="60" x="-30" y="-30"/></g>
+          <g transform="translate(106 142) scale(.8)"><use href="#floral-blossom" width="60" height="60" x="-30" y="-30"/></g>
+          <g transform="translate(194 144) scale(.8)"><use href="#floral-blossom" width="60" height="60" x="-30" y="-30"/></g>
+          <g transform="translate(128 176) scale(.58)"><use href="#floral-blossom" width="60" height="60" x="-30" y="-30"/></g>
+          <g transform="translate(172 174) scale(.6)"><use href="#floral-blossom" width="60" height="60" x="-30" y="-30"/></g>
+        </g>
+        <g fill="#c7385a" opacity=".4">
+          <circle cx="122" cy="108" r="4"/><circle cx="180" cy="112" r="3.5"/><circle cx="150" cy="162" r="3"/>
+        </g>
+      </symbol>
     </defs>
   </svg>
 
@@ -878,6 +925,7 @@
 
     <section class="messages" aria-labelledby="messages-title">
       <div class="section-decor" aria-hidden="true">
+        <svg class="floral-art floral-bouquet is-bouquet-top" viewBox="0 0 300 300"><use href="#floral-bouquet"/></svg>
         <svg class="floral-art floral-corner is-top-right" viewBox="0 0 280 280"><use href="#floral-branch"/></svg>
         <svg class="floral-art floral-edge is-mid-left" viewBox="0 0 280 280"><use href="#floral-branch"/></svg>
         <svg class="floral-art floral-edge is-mid-right" viewBox="0 0 280 280"><use href="#floral-branch"/></svg>
@@ -890,6 +938,13 @@
           <article class="message-card">
             <p class="photo-wrap"><img src="images/photo_4.jpg" alt="手書きのお祝いメッセージを掲げるおふたりの写真" loading="lazy"></p>
             <p class="sender">── 勝俣家より</p>
+          </article>
+          <article class="message-card">
+            <p>正ちゃん&amp;由里子ちゃん</p>
+            <p>ご結婚おめでとう。</p>
+            <p>ふたりの新たな門出を勉さんと共に心から喜んでおります。</p>
+            <p>この先ふたりで歩む道が未来永劫に沢山の笑顔と幸せの花でいっぱいになりますように願っております。</p>
+            <p class="sender">── 勉&amp;佐和子より</p>
           </article>
           <article class="message-card">
             <p>ご結婚おめでとうございます。</p>
@@ -908,21 +963,14 @@
             <p class="sender">── 祐香より</p>
           </article>
           <article class="message-card">
-            <p class="photo-wrap"><img src="images/photo_3.jpg" alt="手書きのお祝いメッセージを掲げるおふたりの写真" loading="lazy"></p>
-            <p class="sender">── 河西家より</p>
-          </article>
-          <article class="message-card">
             <p class="photo-wrap"><img src="images/photo_1.jpg" alt="うちわを持ってお祝いする5人の写真" loading="lazy"></p>
           </article>
           <article class="message-card">
             <p class="photo-wrap"><img src="images/photo_2.jpg" alt="おめでとうワン！の文字と3匹のわんこの写真" loading="lazy"></p>
           </article>
           <article class="message-card">
-            <p>正ちゃん&amp;由里子ちゃん</p>
-            <p>ご結婚おめでとう。</p>
-            <p>ふたりの新たな門出を勉さんと共に心から喜んでおります。</p>
-            <p>この先ふたりで歩む道が未来永劫に沢山の笑顔と幸せの花でいっぱいになりますように願っております。</p>
-            <p class="sender">── 勉&amp;佐和子より</p>
+            <p class="photo-wrap"><img src="images/photo_3.jpg" alt="手書きのお祝いメッセージを掲げるおふたりの写真" loading="lazy"></p>
+            <p class="sender">── 河西家より</p>
           </article>
         </div>
       </div>
@@ -963,6 +1011,7 @@
       <div class="section-decor" aria-hidden="true">
         <svg class="floral-art floral-corner is-top-right" viewBox="0 0 280 280"><use href="#floral-branch"/></svg>
         <svg class="floral-art floral-corner is-bottom-left" viewBox="0 0 280 280"><use href="#floral-branch"/></svg>
+        <svg class="floral-art floral-bouquet is-bouquet-bottom" viewBox="0 0 300 300"><use href="#floral-bouquet"/></svg>
       </div>
       <div class="petal-field" aria-hidden="true">
         <i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i>
@@ -970,7 +1019,7 @@
       </div>
       <div class="closing-content reveal-target">
         <h2>末永くお幸せに</h2>
-        <p class="closing-from">勝俣父母・河西家・モモナヒロ・ホナミコトミ・邦広家・佐和子家 一同より</p>
+        <p class="closing-from">勝俣 邦雄・勝俣 公恵・勝俣 勉・勝俣 佐和子<br>勝俣 颯太・勝俣 邦広・勝俣 まりか<br>一同より</p>
         <p class="closing-date"><time datetime="2026-08-16">2026.8.16 お盆に寄せて</time></p>
       </div>
     </footer>
