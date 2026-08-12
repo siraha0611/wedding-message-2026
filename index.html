@@ -12,7 +12,7 @@
   <style>
     :root {
       --cream: #fff9f2;
-      --ink: #5d4037;
+      --ink: #4a3227;
       --gold: #c9a227;
       --red: #c7385a;
       --pink: #f6e3e3;
@@ -285,6 +285,76 @@
     /* Shared layout */
     main { overflow: hidden; }
 
+    /* Inline florals stay on a separate edge layer so they never reduce text contrast. */
+    .section-decor {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .section-decor .floral-corner { opacity: .27; }
+    .section-decor .floral-edge { opacity: .2; }
+
+    .floral-art {
+      position: absolute;
+      width: clamp(150px, 38vw, 310px);
+      height: auto;
+      overflow: visible;
+    }
+
+    .floral-art.is-top-left { top: -22px; left: -28px; }
+    .floral-art.is-top-right { top: -28px; right: -38px; transform: scaleX(-1) rotate(-5deg); }
+    .floral-art.is-bottom-left { bottom: -30px; left: -38px; transform: scaleY(-1) rotate(4deg); }
+    .floral-art.is-bottom-right { right: -35px; bottom: -28px; transform: scale(-1); }
+    .floral-art.is-mid-left { top: 45%; left: -70px; transform: rotate(-18deg); }
+    .floral-art.is-mid-right { top: 68%; right: -72px; transform: scaleX(-1) rotate(-18deg); }
+
+    .section-divider {
+      position: relative;
+      z-index: 4;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: min(calc(100% - 56px), 580px);
+      height: 0;
+      margin: 0 auto;
+      color: var(--gold);
+      pointer-events: none;
+    }
+
+    .section-divider::before,
+    .section-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201, 162, 39, .66));
+    }
+
+    .section-divider::after { transform: scaleX(-1); }
+    .section-divider svg { width: 22px; height: 22px; overflow: visible; }
+
+    .reveal-target {
+      opacity: 0;
+      transform: translateY(22px) scale(.98);
+      transition: opacity .9s ease-out, transform .9s ease-out;
+      will-change: opacity, transform;
+    }
+
+    .reveal-target.is-visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      will-change: auto;
+    }
+
+    body.is-covered .hero .reveal-target.is-visible {
+      opacity: 0;
+      transform: translateY(22px) scale(.98);
+    }
+
     .section-inner {
       width: min(100% - 40px, 720px);
       margin-inline: auto;
@@ -292,7 +362,7 @@
 
     .eyebrow {
       margin: 0 0 14px;
-      color: var(--gold);
+      color: #967716;
       font-family: var(--mincho);
       font-size: 12px;
       letter-spacing: .26em;
@@ -347,7 +417,7 @@
       align-items: center;
       gap: 12px;
       margin: 0 0 28px;
-      color: var(--red);
+      color: #a92f4c;
       font-family: var(--mincho);
       font-size: 14px;
       letter-spacing: .25em;
@@ -370,7 +440,7 @@
 
     .hero-date {
       margin: 15px 0 32px;
-      color: #907766;
+      color: #6f5547;
       font-family: var(--mincho);
       font-size: 15px;
       letter-spacing: .2em;
@@ -384,34 +454,59 @@
       letter-spacing: .07em;
     }
 
-    .float-shape {
+    .petal-field {
       position: absolute;
+      inset: 0;
       z-index: 1;
-      width: 13px;
-      height: 18px;
-      border-radius: 80% 20% 70% 30%;
-      background: rgba(199, 56, 90, .16);
-      animation: drift 9s ease-in-out infinite;
+      overflow: hidden;
+      pointer-events: none;
     }
 
-    .float-shape.is-light { border-radius: 50%; background: rgba(255, 255, 255, .7); filter: blur(1px); }
-    .float-shape:nth-child(1) { top: 13%; left: 12%; animation-delay: -2s; }
-    .float-shape:nth-child(2) { top: 29%; right: 9%; width: 24px; height: 24px; animation-delay: -5s; }
-    .float-shape:nth-child(3) { bottom: 18%; left: 8%; width: 10px; height: 15px; animation-delay: -7s; }
-    .float-shape:nth-child(4) { bottom: 10%; right: 16%; width: 17px; height: 17px; animation-delay: -3s; }
+    .petal {
+      position: absolute;
+      top: -12%;
+      left: var(--x);
+      width: var(--size);
+      height: calc(var(--size) * 1.45);
+      border-radius: 78% 22% 72% 28% / 68% 30% 70% 32%;
+      background: radial-gradient(circle at 28% 24%, rgba(255,255,255,.82), rgba(246,227,227,.82) 38%, rgba(199,56,90,.22) 100%);
+      box-shadow: inset -1px -2px 3px rgba(199, 56, 90, .1);
+      opacity: var(--opacity, .55);
+      transform: rotate(var(--rotate));
+      animation: petal-fall var(--duration) linear var(--delay) infinite;
+      will-change: transform;
+    }
 
-    @keyframes drift {
-      0%, 100% { transform: translate3d(0, 0, 0) rotate(5deg); }
-      50% { transform: translate3d(9px, -22px, 0) rotate(42deg); }
+    .petal:nth-child(1) { --x: 5%; --size: 11px; --duration: 14s; --delay: -4s; --rotate: 18deg; }
+    .petal:nth-child(2) { --x: 15%; --size: 15px; --duration: 18s; --delay: -12s; --rotate: -12deg; --opacity: .42; }
+    .petal:nth-child(3) { --x: 27%; --size: 9px; --duration: 16s; --delay: -7s; --rotate: 35deg; }
+    .petal:nth-child(4) { --x: 39%; --size: 13px; --duration: 20s; --delay: -16s; --rotate: 8deg; --opacity: .4; }
+    .petal:nth-child(5) { --x: 51%; --size: 10px; --duration: 15s; --delay: -2s; --rotate: -28deg; }
+    .petal:nth-child(6) { --x: 62%; --size: 16px; --duration: 21s; --delay: -11s; --rotate: 17deg; --opacity: .38; }
+    .petal:nth-child(7) { --x: 73%; --size: 12px; --duration: 17s; --delay: -14s; --rotate: 42deg; }
+    .petal:nth-child(8) { --x: 84%; --size: 9px; --duration: 19s; --delay: -5s; --rotate: -5deg; }
+    .petal:nth-child(9) { --x: 92%; --size: 14px; --duration: 22s; --delay: -18s; --rotate: 24deg; --opacity: .4; }
+    .petal:nth-child(10) { --x: 33%; --size: 8px; --duration: 23s; --delay: -20s; --rotate: -18deg; }
+
+    @keyframes petal-fall {
+      0% { transform: translate3d(0, -8vh, 0) rotate(var(--rotate)); }
+      25% { transform: translate3d(22px, 26vh, 0) rotate(calc(var(--rotate) + 90deg)); }
+      55% { transform: translate3d(-18px, 58vh, 0) rotate(calc(var(--rotate) + 205deg)); }
+      78% { transform: translate3d(18px, 84vh, 0) rotate(calc(var(--rotate) + 300deg)); }
+      100% { transform: translate3d(-8px, 116vh, 0) rotate(calc(var(--rotate) + 420deg)); }
     }
 
     /* Messages */
     .messages {
+      position: relative;
       padding: 94px 0 106px;
       background:
         radial-gradient(circle at 100% 10%, rgba(246, 227, 227, .65), transparent 27%),
         var(--cream);
     }
+
+    .messages .section-inner,
+    .video-section .section-inner { position: relative; z-index: 2; }
 
     .message-list { display: grid; gap: 22px; }
 
@@ -456,7 +551,7 @@
     .message-card p:not(.sender) {
       font-family: var(--mincho);
       font-size: 17px;
-      font-weight: 500;
+      font-weight: 600;
       line-height: 2.15;
       letter-spacing: .05em;
     }
@@ -472,22 +567,45 @@
       border-radius: 12px;
     }
 
-    .message-card p:not(.sender),
+    .message-card .photo-wrap,
     .message-card .sender {
       opacity: 0;
       transform: translateY(16px);
       transition: opacity .85s ease, transform .85s cubic-bezier(.2, .7, .25, 1);
     }
 
-    .message-card.is-visible p:not(.sender),
+    .message-card.is-visible .photo-wrap,
     .message-card.is-visible .sender {
       opacity: 1;
       transform: none;
     }
 
+    .message-card.has-typewriter .sender { opacity: 0; transform: translateY(16px); transition-delay: 0s; }
+    .message-card.has-typewriter .sender.is-signed { opacity: 1; transform: none; }
+
+    .type-char {
+      opacity: 0;
+      transition: opacity .12s ease;
+    }
+
+    .type-char.is-typed { opacity: 1; }
+
+    .type-char.is-current::after {
+      content: "";
+      display: inline-block;
+      width: 1px;
+      height: .95em;
+      margin-left: 2px;
+      background: var(--gold);
+      vertical-align: -.1em;
+      animation: cursor-blink .72s step-end infinite;
+    }
+
+    @keyframes cursor-blink { 0%, 46% { opacity: 1; } 47%, 100% { opacity: 0; } }
+
     .sender {
       margin-top: 19px !important;
-      color: #80685c;
+      color: #6b5344;
       font-family: var(--mincho);
       font-size: 13px;
       letter-spacing: .07em;
@@ -496,6 +614,7 @@
 
     /* Video */
     .video-section {
+      position: relative;
       padding: 94px 0 105px;
       background: linear-gradient(180deg, #f8eaea 0%, #fff9f2 100%);
     }
@@ -557,22 +676,13 @@
       min-height: 70dvh;
       padding: 100px 28px max(88px, calc(64px + env(safe-area-inset-bottom)));
       overflow: hidden;
-      background: #fffaf4;
+      background:
+        radial-gradient(circle at 50% 100%, rgba(246, 227, 227, .58), transparent 46%),
+        #fffaf4;
       text-align: center;
     }
 
-    .closing::before,
-    .closing::after {
-      content: "";
-      position: absolute;
-      left: 50%;
-      width: 1px;
-      height: 56px;
-      background: linear-gradient(transparent, var(--gold), transparent);
-    }
-
-    .closing::before { top: 25px; }
-    .closing::after { bottom: 22px; }
+    .closing-content { position: relative; z-index: 2; }
 
     .closing h2 {
       margin: 0 0 28px;
@@ -586,7 +696,7 @@
     .closing-from {
       max-width: 540px;
       margin: 0 auto;
-      color: #786157;
+      color: #62483c;
       font-family: var(--mincho);
       font-size: 12px;
       line-height: 2.2;
@@ -595,11 +705,38 @@
 
     .closing-date {
       margin: 25px 0 0;
-      color: var(--gold);
+      color: #967716;
       font-family: var(--mincho);
       font-size: 13px;
       letter-spacing: .16em;
     }
+
+    .music-toggle {
+      position: fixed;
+      right: max(18px, env(safe-area-inset-right));
+      bottom: max(18px, calc(env(safe-area-inset-bottom) + 12px));
+      z-index: 900;
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      padding: 0;
+      color: #fffdfb;
+      border: 1px solid rgba(255, 255, 255, .72);
+      border-radius: 50%;
+      background: linear-gradient(145deg, #d04c69, #a92f4c);
+      box-shadow: 0 8px 24px rgba(74, 50, 39, .22), 0 0 0 4px rgba(201, 162, 39, .12);
+      cursor: pointer;
+      transition: transform .25s ease, box-shadow .25s ease, opacity .3s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .music-toggle:hover { transform: translateY(-2px); box-shadow: 0 11px 27px rgba(74, 50, 39, .25), 0 0 0 4px rgba(201, 162, 39, .15); }
+    .music-toggle:focus-visible { outline: 3px solid rgba(201, 162, 39, .5); outline-offset: 3px; }
+    .music-note { font-family: Georgia, serif; font-size: 23px; line-height: 1; transform: translateY(-1px); }
+    .music-slash { position: absolute; width: 24px; height: 2px; border-radius: 2px; background: #fffdfb; opacity: 0; transform: rotate(-45deg); transition: opacity .2s; }
+    .music-toggle.is-muted .music-slash { opacity: 1; }
+    .music-toggle[hidden] { display: none; }
 
     @media (min-width: 700px) {
       body { font-size: 16px; }
@@ -620,6 +757,10 @@
       }
       .message-card { opacity: 1; transform: none; }
       .message-card p { opacity: 1; transform: none; }
+      .reveal-target { opacity: 1; transform: none; }
+      .type-char { opacity: 1; }
+      .type-char.is-current::after { display: none; }
+      .petal-field { display: none; }
     }
   </style>
 </head>
@@ -641,13 +782,72 @@
     </div>
   </div>
 
+  <svg aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
+    <defs>
+      <radialGradient id="petal-wash" cx="32%" cy="26%" r="78%">
+        <stop offset="0" stop-color="#fffdfb" stop-opacity=".96"/>
+        <stop offset=".46" stop-color="#f6e3e3" stop-opacity=".9"/>
+        <stop offset="1" stop-color="#d96f87" stop-opacity=".55"/>
+      </radialGradient>
+      <radialGradient id="petal-wash-light" cx="44%" cy="32%" r="70%">
+        <stop offset="0" stop-color="#fffdfb" stop-opacity=".98"/>
+        <stop offset="1" stop-color="#efb8c3" stop-opacity=".62"/>
+      </radialGradient>
+      <linearGradient id="gold-wash" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#a77c14" stop-opacity=".7"/>
+        <stop offset=".55" stop-color="#c9a227" stop-opacity=".95"/>
+        <stop offset="1" stop-color="#efd98a" stop-opacity=".65"/>
+      </linearGradient>
+      <symbol id="floral-blossom" viewBox="0 0 60 60">
+        <g transform="translate(30 30)">
+          <path d="M0-2C-14-25-30-15-20 2-14 12-5 10 0-2Z" fill="url(#petal-wash)"/>
+          <path d="M1-2C9-27 29-22 23-3 19 10 9 11 1-2Z" fill="url(#petal-wash-light)"/>
+          <path d="M2 1C25-12 34 5 17 15 7 21 1 13 2 1Z" fill="url(#petal-wash)"/>
+          <path d="M-1 2C16 20 1 34-11 18-18 9-11 2-1 2Z" fill="url(#petal-wash-light)"/>
+          <path d="M-3 1C-13 26-32 18-24 0-19-10-10-9-3 1Z" fill="url(#petal-wash)"/>
+          <circle r="5.5" fill="#c9a227" opacity=".85"/>
+          <circle cx="-1.2" cy="-1.2" r="2" fill="#fff4c7" opacity=".9"/>
+        </g>
+      </symbol>
+      <symbol id="floral-branch" viewBox="0 0 280 280">
+        <g fill="none" stroke="url(#gold-wash)" stroke-linecap="round">
+          <path d="M-8 272C42 236 54 180 101 147 144 117 183 87 205 18" stroke-width="2.1"/>
+          <path d="M49 226C87 225 112 206 130 179" stroke-width="1.5"/>
+          <path d="M98 151C93 117 107 91 130 72" stroke-width="1.5"/>
+          <path d="M148 111C181 113 207 98 224 77" stroke-width="1.35"/>
+        </g>
+        <g fill="#c9a227" opacity=".62">
+          <path d="M33 241C46 229 59 230 62 232C52 239 42 241 33 241Z"/>
+          <path d="M60 216C69 195 83 192 88 193C84 205 74 214 60 216Z"/>
+          <path d="M102 175C81 169 75 156 76 151C90 154 99 162 102 175Z"/>
+          <path d="M126 134C145 130 156 139 158 143C146 146 136 142 126 134Z"/>
+          <path d="M165 101C150 84 154 69 158 66C168 77 170 90 165 101Z"/>
+          <path d="M194 60C213 55 224 64 226 68C214 71 203 68 194 60Z"/>
+          <path d="M128 180C145 164 160 166 164 170C153 180 141 184 128 180Z"/>
+        </g>
+        <g>
+          <g transform="translate(109 143) scale(.9)"><use href="#floral-blossom" width="60" height="60" x="-30" y="-30"/></g>
+          <g transform="translate(204 47) scale(.6)"><use href="#floral-blossom" width="60" height="60" x="-30" y="-30"/></g>
+          <g transform="translate(52 225) scale(.46)"><use href="#floral-blossom" width="60" height="60" x="-30" y="-30"/></g>
+        </g>
+        <g fill="#c7385a" opacity=".42">
+          <circle cx="132" cy="73" r="4"/><circle cx="225" cy="77" r="3.5"/><circle cx="76" cy="151" r="3"/>
+        </g>
+      </symbol>
+    </defs>
+  </svg>
+
   <main>
     <section class="hero" id="hero" aria-labelledby="hero-title">
-      <span class="float-shape" aria-hidden="true"></span>
-      <span class="float-shape is-light" aria-hidden="true"></span>
-      <span class="float-shape" aria-hidden="true"></span>
-      <span class="float-shape is-light" aria-hidden="true"></span>
-      <div class="hero-content">
+      <div class="section-decor" aria-hidden="true">
+        <svg class="floral-art floral-corner is-top-left" viewBox="0 0 280 280"><use href="#floral-branch"/></svg>
+        <svg class="floral-art floral-corner is-bottom-right" viewBox="0 0 280 280"><use href="#floral-branch"/></svg>
+      </div>
+      <div class="petal-field" aria-hidden="true">
+        <i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i>
+        <i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i>
+      </div>
+      <div class="hero-content reveal-target">
         <p class="hero-kicker">祝 ご入籍</p>
         <h1 id="hero-title"><span class="name">由里子さん・</span><span class="name">真さん</span></h1>
         <p class="hero-date"><time datetime="2026-08-08">2026.8.8</time></p>
@@ -655,10 +855,18 @@
       </div>
     </section>
 
+    <div class="section-divider" aria-hidden="true"><svg viewBox="0 0 60 60"><use href="#floral-blossom"/></svg></div>
+
     <section class="messages" aria-labelledby="messages-title">
+      <div class="section-decor" aria-hidden="true">
+        <svg class="floral-art floral-corner is-top-right" viewBox="0 0 280 280"><use href="#floral-branch"/></svg>
+        <svg class="floral-art floral-edge is-mid-left" viewBox="0 0 280 280"><use href="#floral-branch"/></svg>
+        <svg class="floral-art floral-edge is-mid-right" viewBox="0 0 280 280"><use href="#floral-branch"/></svg>
+        <svg class="floral-art floral-corner is-bottom-left" viewBox="0 0 280 280"><use href="#floral-branch"/></svg>
+      </div>
       <div class="section-inner">
-        <p class="eyebrow" style="text-align:center">MESSAGES</p>
-        <h2 class="section-title" id="messages-title">みんなからの<br>お祝いメッセージ</h2>
+        <p class="eyebrow reveal-target" style="text-align:center">MESSAGES</p>
+        <h2 class="section-title reveal-target" id="messages-title">みんなからの<br>お祝いメッセージ</h2>
         <div class="message-list">
           <article class="message-card">
             <p class="photo-wrap"><img src="images/photo_4.jpg" alt="手書きのお祝いメッセージを掲げるおふたりの写真" loading="lazy"></p>
@@ -716,11 +924,17 @@
       </div>
     </section>
 
+    <div class="section-divider" aria-hidden="true"><svg viewBox="0 0 60 60"><use href="#floral-blossom"/></svg></div>
+
     <section class="video-section" aria-labelledby="video-title">
+      <div class="section-decor" aria-hidden="true">
+        <svg class="floral-art floral-corner is-top-left" viewBox="0 0 280 280"><use href="#floral-branch"/></svg>
+        <svg class="floral-art floral-corner is-bottom-right" viewBox="0 0 280 280"><use href="#floral-branch"/></svg>
+      </div>
       <div class="section-inner">
-        <p class="eyebrow" style="text-align:center">VIDEO</p>
-        <h2 class="section-title" id="video-title">ビデオメッセージ</h2>
-        <div class="video-frame">
+        <p class="eyebrow reveal-target" style="text-align:center">VIDEO</p>
+        <h2 class="section-title reveal-target" id="video-title">ビデオメッセージ</h2>
+        <div class="video-frame reveal-target">
           <div class="video-placeholder">
             <span class="play-mark" aria-hidden="true"></span>
             <p>動画は準備中です</p>
@@ -738,14 +952,29 @@
       </div>
     </section>
 
+    <div class="section-divider" aria-hidden="true"><svg viewBox="0 0 60 60"><use href="#floral-blossom"/></svg></div>
+
     <footer class="closing">
-      <div>
+      <div class="section-decor" aria-hidden="true">
+        <svg class="floral-art floral-corner is-top-right" viewBox="0 0 280 280"><use href="#floral-branch"/></svg>
+        <svg class="floral-art floral-corner is-bottom-left" viewBox="0 0 280 280"><use href="#floral-branch"/></svg>
+      </div>
+      <div class="petal-field" aria-hidden="true">
+        <i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i>
+        <i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i>
+      </div>
+      <div class="closing-content reveal-target">
         <h2>末永くお幸せに</h2>
         <p class="closing-from">勝俣父母・河西家・モモナヒロ・ホナミコトミ・邦広家・佐和子家 一同より</p>
         <p class="closing-date"><time datetime="2026-08-16">2026.8.16 お盆に寄せて</time></p>
       </div>
     </footer>
   </main>
+
+  <button class="music-toggle" id="music-toggle" type="button" aria-label="BGMをミュート" aria-pressed="false" hidden>
+    <span class="music-note" aria-hidden="true">♪</span>
+    <span class="music-slash" aria-hidden="true"></span>
+  </button>
 
   <script>
     (() => {
@@ -754,15 +983,192 @@
       const cover = document.getElementById("cover");
       const openButton = document.getElementById("open-envelope");
       const hero = document.getElementById("hero");
+      const musicToggle = document.getElementById("music-toggle");
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const pendingTimers = new Set();
       let hasOpened = false;
+
+      // External audio is intentionally avoided: the music box loop is synthesized per note.
+      const music = {
+        context: null,
+        master: null,
+        intervalId: 0,
+        nextNoteTime: 0,
+        step: 0,
+        muted: false
+      };
+
+      function schedule(callback, delay) {
+        const timerId = window.setTimeout(() => {
+          pendingTimers.delete(timerId);
+          callback();
+        }, delay);
+        pendingTimers.add(timerId);
+        return timerId;
+      }
+
+      function midiToFrequency(note) {
+        return 440 * Math.pow(2, (note - 69) / 12);
+      }
+
+      function createMusicBoxNote(note, startTime, volume = .22) {
+        const context = music.context;
+        if (!context || !music.master) return;
+
+        const envelope = context.createGain();
+        const fundamental = context.createOscillator();
+        const overtone = context.createOscillator();
+        const overtoneLevel = context.createGain();
+        const frequency = midiToFrequency(note);
+        const endTime = startTime + 1.75;
+
+        fundamental.type = "sine";
+        fundamental.frequency.setValueAtTime(frequency, startTime);
+        overtone.type = "sine";
+        overtone.frequency.setValueAtTime(frequency * 3, startTime);
+        overtoneLevel.gain.setValueAtTime(.16, startTime);
+
+        envelope.gain.setValueAtTime(.0001, startTime);
+        envelope.gain.exponentialRampToValueAtTime(volume, startTime + .009);
+        envelope.gain.exponentialRampToValueAtTime(.0001, endTime);
+
+        fundamental.connect(envelope);
+        overtone.connect(overtoneLevel);
+        overtoneLevel.connect(envelope);
+        envelope.connect(music.master);
+        envelope.connect(music.echoInput);
+
+        fundamental.start(startTime);
+        overtone.start(startTime);
+        fundamental.stop(endTime + .03);
+        overtone.stop(endTime + .03);
+
+        let endedOscillators = 0;
+        function releaseNodes() {
+          endedOscillators += 1;
+          if (endedOscillators < 2) return;
+          fundamental.disconnect();
+          overtone.disconnect();
+          overtoneLevel.disconnect();
+          envelope.disconnect();
+        }
+        fundamental.addEventListener("ended", releaseNodes, { once: true });
+        overtone.addEventListener("ended", releaseNodes, { once: true });
+      }
+
+      function scheduleMusic() {
+        if (!music.context || music.context.state !== "running") return;
+
+        const secondsPerStep = (60 / 72) / 2;
+        const chords = [
+          [60, 64, 67, 72],
+          [55, 59, 62, 67],
+          [57, 60, 64, 69],
+          [53, 57, 60, 65]
+        ];
+        const arpeggio = [0, 1, 2, 3, 2, 1, 2, 3];
+        const melody = [
+          72, null, 76, null, 79, null, 76, null,
+          71, null, 74, null, 79, null, 74, null,
+          69, null, 72, null, 76, null, 72, null,
+          69, null, 72, null, 77, null, 76, null
+        ];
+
+        if (music.nextNoteTime < music.context.currentTime - .1) {
+          music.nextNoteTime = music.context.currentTime + .06;
+        }
+
+        while (music.nextNoteTime < music.context.currentTime + .35) {
+          const loopStep = music.step % 32;
+          const chord = chords[Math.floor(loopStep / 8)];
+          createMusicBoxNote(chord[arpeggio[loopStep % 8]], music.nextNoteTime, .16);
+          if (melody[loopStep] !== null) {
+            createMusicBoxNote(melody[loopStep], music.nextNoteTime, .105);
+          }
+          music.nextNoteTime += secondsPerStep;
+          music.step += 1;
+        }
+      }
+
+      function startScheduler() {
+        if (!music.context) return;
+        window.clearInterval(music.intervalId);
+        music.nextNoteTime = music.context.currentTime + .06;
+        scheduleMusic();
+        music.intervalId = window.setInterval(scheduleMusic, 100);
+      }
+
+      function startMusic() {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+
+        if (!music.context) {
+          const context = new AudioContextClass();
+          const master = context.createGain();
+          const echoInput = context.createGain();
+          const delay = context.createDelay(.8);
+          const feedback = context.createGain();
+          const echoLevel = context.createGain();
+
+          master.gain.setValueAtTime(.12, context.currentTime);
+          echoInput.gain.setValueAtTime(1, context.currentTime);
+          delay.delayTime.setValueAtTime(.34, context.currentTime);
+          feedback.gain.setValueAtTime(.18, context.currentTime);
+          echoLevel.gain.setValueAtTime(.24, context.currentTime);
+
+          echoInput.connect(delay);
+          delay.connect(feedback);
+          feedback.connect(delay);
+          delay.connect(echoLevel);
+          echoLevel.connect(master);
+          master.connect(context.destination);
+
+          music.context = context;
+          music.master = master;
+          music.echoInput = echoInput;
+          music.delay = delay;
+          music.feedback = feedback;
+          music.echoLevel = echoLevel;
+        }
+
+        music.muted = false;
+        musicToggle.classList.remove("is-muted");
+        musicToggle.setAttribute("aria-pressed", "false");
+        musicToggle.setAttribute("aria-label", "BGMをミュート");
+        music.context.resume().then(() => {
+          if (!music.muted) startScheduler();
+        }).catch(() => {});
+      }
+
+      function toggleMusic() {
+        if (!music.context) {
+          startMusic();
+          return;
+        }
+
+        music.muted = !music.muted;
+        musicToggle.classList.toggle("is-muted", music.muted);
+        musicToggle.setAttribute("aria-pressed", String(music.muted));
+        musicToggle.setAttribute("aria-label", music.muted ? "BGMを再生" : "BGMをミュート");
+
+        if (music.muted) {
+          window.clearInterval(music.intervalId);
+          music.intervalId = 0;
+          music.context.suspend().catch(() => {});
+        } else {
+          music.context.resume().then(() => {
+            if (!music.muted) startScheduler();
+          }).catch(() => {});
+        }
+      }
 
       function finishOpening() {
         cover.classList.add("is-leaving");
         document.body.classList.remove("is-covered");
 
-        window.setTimeout(() => {
+        schedule(() => {
           cover.hidden = true;
+          if (music.context) musicToggle.hidden = false;
           hero.scrollIntoView({ behavior: reducedMotion.matches ? "auto" : "smooth", block: "start" });
         }, reducedMotion.matches ? 20 : 720);
       }
@@ -864,39 +1270,124 @@
         hasOpened = true;
         openButton.disabled = true;
         cover.classList.add("is-opening");
+        startMusic();
 
         if (reducedMotion.matches) {
           finishOpening();
           return;
         }
 
-        window.setTimeout(createConfetti, 620);
-        window.setTimeout(finishOpening, 2580);
+        schedule(createConfetti, 620);
+        schedule(finishOpening, 2580);
       }
 
       openButton.addEventListener("click", openMessage);
       openButton.addEventListener("touchend", openMessage, { passive: false });
+      musicToggle.addEventListener("click", toggleMusic);
 
       const cards = document.querySelectorAll(".message-card");
-      cards.forEach((card) => {
-        card.querySelectorAll("p").forEach((line, index) => {
-          line.style.transitionDelay = `${(.2 + index * .45).toFixed(2)}s`;
+      const revealTargets = document.querySelectorAll(".reveal-target");
+
+      // Character spans preserve the completed line layout while only opacity changes.
+      function prepareTypewriter(card) {
+        const lines = Array.from(card.querySelectorAll("p:not(.sender):not(.photo-wrap)"));
+        if (!lines.length) return [];
+
+        card.classList.add("has-typewriter");
+        return lines.map((line) => {
+          const characters = Array.from(line.textContent || "");
+          const fragment = document.createDocumentFragment();
+          line.textContent = "";
+          characters.forEach((character) => {
+            const span = document.createElement("span");
+            span.className = "type-char";
+            span.textContent = character;
+            fragment.appendChild(span);
+          });
+          line.appendChild(fragment);
+          return Array.from(line.querySelectorAll(".type-char"));
         });
-      });
+      }
+
+      const typewriterLines = new Map();
+      cards.forEach((card) => typewriterLines.set(card, prepareTypewriter(card)));
+
+      function revealImmediately(card) {
+        card.classList.add("is-visible");
+        card.querySelectorAll(".type-char").forEach((character) => character.classList.add("is-typed"));
+        const sender = card.querySelector(".sender");
+        if (sender) sender.classList.add("is-signed");
+      }
+
+      function runTypewriter(card) {
+        const lines = typewriterLines.get(card) || [];
+        const sender = card.querySelector(".sender");
+        if (!lines.length) return;
+
+        let lineIndex = 0;
+        let characterIndex = 0;
+        let currentCharacter = null;
+
+        function showNextCharacter() {
+          if (lineIndex >= lines.length) {
+            if (currentCharacter) currentCharacter.classList.remove("is-current");
+            if (sender) schedule(() => sender.classList.add("is-signed"), 350);
+            return;
+          }
+
+          const line = lines[lineIndex];
+          if (characterIndex >= line.length) {
+            schedule(() => {
+              if (currentCharacter) currentCharacter.classList.remove("is-current");
+              lineIndex += 1;
+              characterIndex = 0;
+              showNextCharacter();
+            }, 400);
+            return;
+          }
+
+          if (currentCharacter) currentCharacter.classList.remove("is-current");
+          currentCharacter = line[characterIndex];
+          currentCharacter.classList.add("is-typed", "is-current");
+          characterIndex += 1;
+          schedule(showNextCharacter, 55);
+        }
+
+        schedule(showNextCharacter, 220);
+      }
+
       if (reducedMotion.matches || !("IntersectionObserver" in window)) {
-        cards.forEach((card) => card.classList.add("is-visible"));
+        cards.forEach(revealImmediately);
+        revealTargets.forEach((target) => target.classList.add("is-visible"));
       } else {
-        const observer = new IntersectionObserver((entries) => {
+        const cardObserver = new IntersectionObserver((entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
               entry.target.classList.add("is-visible");
-              observer.unobserve(entry.target);
+              runTypewriter(entry.target);
+              cardObserver.unobserve(entry.target);
             }
           });
         }, { rootMargin: "0px 0px -8%", threshold: .12 });
 
-        cards.forEach((card) => observer.observe(card));
+        const revealObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("is-visible");
+            revealObserver.unobserve(entry.target);
+          });
+        }, { rootMargin: "0px 0px -7%", threshold: .14 });
+
+        cards.forEach((card) => cardObserver.observe(card));
+        revealTargets.forEach((target) => revealObserver.observe(target));
       }
+
+      window.addEventListener("pagehide", () => {
+        pendingTimers.forEach((timerId) => window.clearTimeout(timerId));
+        pendingTimers.clear();
+        window.clearInterval(music.intervalId);
+        if (music.context) music.context.close().catch(() => {});
+      }, { once: true });
     })();
   </script>
 </body>
