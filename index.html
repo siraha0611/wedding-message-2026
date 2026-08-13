@@ -1019,11 +1019,13 @@
       </div>
       <div class="closing-content reveal-target">
         <h2>末永くお幸せに</h2>
-        <p class="closing-from">勝俣 邦雄・勝俣 公恵・勝俣 勉・勝俣 佐和子<br>勝俣 颯太・勝俣 邦広・勝俣 まりか・尊・琳・茅<br>河西 久仁・河西 基彦・河西 直美<br>山森 啓史・萌奈・外川 琴己・穂奈未<br>まる・ふく・てん<br>一同より</p>
+        <p class="closing-from">勝俣 邦雄・勝俣 公恵<br>勝俣 勉・勝俣 佐和子・勝俣 颯太・勝俣 祐香<br>勝俣 邦広・勝俣 まりか・尊・琳・茅<br>河西 久仁・河西 基彦・河西 直美<br>山森 啓史・萌奈・外川 琴己・穂奈未<br>まる・ふく・てん<br>一同より</p>
         <p class="closing-date"><time datetime="2026-08-16">2026.8.16 お盆に寄せて</time></p>
       </div>
     </footer>
   </main>
+
+  <audio id="bgm" src="audio/wedding_cake.mp3" loop preload="auto"></audio>
 
   <button class="music-toggle" id="music-toggle" type="button" aria-label="BGMをミュート" aria-pressed="false" hidden>
     <span class="music-note" aria-hidden="true">♪</span>
@@ -1043,15 +1045,7 @@
       const pendingTimers = new Set();
       let hasOpened = false;
 
-      // External audio is intentionally avoided: the music box loop is synthesized per note.
-      const music = {
-        context: null,
-        master: null,
-        intervalId: 0,
-        nextNoteTime: 0,
-        step: 0,
-        muted: false
-      };
+      const bgm = document.getElementById("bgm");
 
       function schedule(callback, delay) {
         const timerId = window.setTimeout(() => {
@@ -1062,161 +1056,28 @@
         return timerId;
       }
 
-      function midiToFrequency(note) {
-        return 440 * Math.pow(2, (note - 69) / 12);
-      }
-
-      function createMusicBoxNote(note, startTime, volume = .22) {
-        const context = music.context;
-        if (!context || !music.master) return;
-
-        const envelope = context.createGain();
-        const fundamental = context.createOscillator();
-        const overtone = context.createOscillator();
-        const overtoneLevel = context.createGain();
-        const frequency = midiToFrequency(note);
-        const endTime = startTime + 1.75;
-
-        fundamental.type = "sine";
-        fundamental.frequency.setValueAtTime(frequency, startTime);
-        overtone.type = "sine";
-        overtone.frequency.setValueAtTime(frequency * 3, startTime);
-        overtoneLevel.gain.setValueAtTime(.16, startTime);
-
-        envelope.gain.setValueAtTime(.0001, startTime);
-        envelope.gain.exponentialRampToValueAtTime(volume, startTime + .009);
-        envelope.gain.exponentialRampToValueAtTime(.0001, endTime);
-
-        fundamental.connect(envelope);
-        overtone.connect(overtoneLevel);
-        overtoneLevel.connect(envelope);
-        envelope.connect(music.master);
-        envelope.connect(music.echoInput);
-
-        fundamental.start(startTime);
-        overtone.start(startTime);
-        fundamental.stop(endTime + .03);
-        overtone.stop(endTime + .03);
-
-        let endedOscillators = 0;
-        function releaseNodes() {
-          endedOscillators += 1;
-          if (endedOscillators < 2) return;
-          fundamental.disconnect();
-          overtone.disconnect();
-          overtoneLevel.disconnect();
-          envelope.disconnect();
-        }
-        fundamental.addEventListener("ended", releaseNodes, { once: true });
-        overtone.addEventListener("ended", releaseNodes, { once: true });
-      }
-
-      function scheduleMusic() {
-        if (!music.context || music.context.state !== "running") return;
-
-        const secondsPerStep = (60 / 72) / 2;
-        const chords = [
-          [60, 64, 67, 72],
-          [55, 59, 62, 67],
-          [57, 60, 64, 69],
-          [53, 57, 60, 65]
-        ];
-        const arpeggio = [0, 1, 2, 3, 2, 1, 2, 3];
-        const melody = [
-          72, null, 76, null, 79, null, 76, null,
-          71, null, 74, null, 79, null, 74, null,
-          69, null, 72, null, 76, null, 72, null,
-          69, null, 72, null, 77, null, 76, null
-        ];
-
-        if (music.nextNoteTime < music.context.currentTime - .1) {
-          music.nextNoteTime = music.context.currentTime + .06;
-        }
-
-        while (music.nextNoteTime < music.context.currentTime + .35) {
-          const loopStep = music.step % 32;
-          const chord = chords[Math.floor(loopStep / 8)];
-          createMusicBoxNote(chord[arpeggio[loopStep % 8]], music.nextNoteTime, .16);
-          if (melody[loopStep] !== null) {
-            createMusicBoxNote(melody[loopStep], music.nextNoteTime, .105);
-          }
-          music.nextNoteTime += secondsPerStep;
-          music.step += 1;
-        }
-      }
-
-      function startScheduler() {
-        if (!music.context) return;
-        window.clearInterval(music.intervalId);
-        music.nextNoteTime = music.context.currentTime + .06;
-        scheduleMusic();
-        music.intervalId = window.setInterval(scheduleMusic, 100);
-      }
-
       function startMusic() {
-        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-        if (!AudioContextClass) return;
-
-        if (!music.context) {
-          const context = new AudioContextClass();
-          const master = context.createGain();
-          const echoInput = context.createGain();
-          const delay = context.createDelay(.8);
-          const feedback = context.createGain();
-          const echoLevel = context.createGain();
-
-          master.gain.setValueAtTime(.12, context.currentTime);
-          echoInput.gain.setValueAtTime(1, context.currentTime);
-          delay.delayTime.setValueAtTime(.34, context.currentTime);
-          feedback.gain.setValueAtTime(.18, context.currentTime);
-          echoLevel.gain.setValueAtTime(.24, context.currentTime);
-
-          echoInput.connect(delay);
-          delay.connect(feedback);
-          feedback.connect(delay);
-          delay.connect(echoLevel);
-          echoLevel.connect(master);
-          master.connect(context.destination);
-
-          music.context = context;
-          music.master = master;
-          music.echoInput = echoInput;
-          music.delay = delay;
-          music.feedback = feedback;
-          music.echoLevel = echoLevel;
-        }
-
-        music.muted = false;
+        if (!bgm) return;
+        bgm.volume = .55;
+        bgm.play().catch(() => {});
         musicToggle.classList.remove("is-muted");
         musicToggle.setAttribute("aria-pressed", "false");
         musicToggle.setAttribute("aria-label", "BGMをミュート");
         musicState.textContent = "ON";
-        music.context.resume().then(() => {
-          if (!music.muted) startScheduler();
-        }).catch(() => {});
       }
 
       function toggleMusic() {
-        if (!music.context) {
-          startMusic();
-          return;
-        }
-
-        music.muted = !music.muted;
-        musicToggle.classList.toggle("is-muted", music.muted);
-        musicToggle.setAttribute("aria-pressed", String(music.muted));
-        musicToggle.setAttribute("aria-label", music.muted ? "BGMを再生" : "BGMをミュート");
-        musicState.textContent = music.muted ? "OFF" : "ON";
-
-        if (music.muted) {
-          window.clearInterval(music.intervalId);
-          music.intervalId = 0;
-          music.context.suspend().catch(() => {});
+        if (!bgm) return;
+        if (bgm.paused) {
+          bgm.play().catch(() => {});
         } else {
-          music.context.resume().then(() => {
-            if (!music.muted) startScheduler();
-          }).catch(() => {});
+          bgm.pause();
         }
+        const isMuted = bgm.paused;
+        musicToggle.classList.toggle("is-muted", isMuted);
+        musicToggle.setAttribute("aria-pressed", String(isMuted));
+        musicToggle.setAttribute("aria-label", isMuted ? "BGMを再生" : "BGMをミュート");
+        musicState.textContent = isMuted ? "OFF" : "ON";
       }
 
       function finishOpening() {
@@ -1225,7 +1086,7 @@
 
         schedule(() => {
           cover.hidden = true;
-          if (music.context) musicToggle.hidden = false;
+          musicToggle.hidden = false;
           hero.scrollIntoView({ behavior: reducedMotion.matches ? "auto" : "smooth", block: "start" });
         }, reducedMotion.matches ? 20 : 720);
       }
@@ -1442,8 +1303,7 @@
       window.addEventListener("pagehide", () => {
         pendingTimers.forEach((timerId) => window.clearTimeout(timerId));
         pendingTimers.clear();
-        window.clearInterval(music.intervalId);
-        if (music.context) music.context.close().catch(() => {});
+        if (bgm) bgm.pause();
       }, { once: true });
     })();
   </script>
