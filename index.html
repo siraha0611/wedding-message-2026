@@ -584,11 +584,13 @@
 
     .message-card .photo-wrap { line-height: 0; }
 
-    .message-card .photo-wrap img {
+    .message-card .photo-wrap img,
+    .message-card .photo-wrap video {
       display: block;
       width: 100%;
       height: auto;
       border-radius: 12px;
+      background: #f3e6dc;
     }
 
     .message-card .photo-wrap,
@@ -969,7 +971,10 @@
             <p class="sender">── 河西家より</p>
           </article>
           <article class="message-card">
-            <p class="photo-wrap"><img src="images/photo_4.jpg" alt="手書きのお祝いメッセージを掲げるおふたりの写真" loading="lazy"></p>
+            <p class="photo-wrap"><video controls playsinline preload="metadata" poster="videos/katsumata_poster.jpg">
+              <source src="videos/katsumata.mp4" type="video/mp4">
+              お使いのブラウザは動画再生に対応していません。
+            </video></p>
             <p class="sender">── 勝俣家より</p>
           </article>
         </div>
@@ -1198,6 +1203,24 @@
         schedule(createConfetti, 620);
         schedule(finishOpening, 2580);
       }
+
+      // Duck the BGM while a video message is playing so the voices stay clear.
+      document.querySelectorAll("video").forEach((clip) => {
+        clip.addEventListener("play", () => {
+          if (bgm && !bgm.paused) {
+            bgm.dataset.ducked = "1";
+            bgm.pause();
+          }
+        });
+        const restore = () => {
+          if (bgm && bgm.dataset.ducked === "1") {
+            delete bgm.dataset.ducked;
+            if (!musicToggle.classList.contains("is-muted")) bgm.play().catch(() => {});
+          }
+        };
+        clip.addEventListener("pause", restore);
+        clip.addEventListener("ended", restore);
+      });
 
       openButton.addEventListener("click", openMessage);
       openButton.addEventListener("touchend", openMessage, { passive: false });
