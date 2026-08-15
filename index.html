@@ -659,6 +659,13 @@
       box-shadow: 0 17px 40px rgba(93, 64, 55, .12);
     }
 
+    .video-frame.is-second { margin-top: 34px; }
+
+    .video-section .sender {
+      margin: 14px 0 0 !important;
+      text-align: center;
+    }
+
     .video-placeholder { text-align: center; }
 
     .play-mark {
@@ -968,13 +975,6 @@
             <p class="photo-wrap"><img src="images/photo_3.jpg" alt="手書きのお祝いメッセージを掲げるおふたりの写真" loading="lazy"></p>
             <p class="sender">── 河西家より</p>
           </article>
-          <article class="message-card">
-            <p class="photo-wrap"><video controls playsinline preload="metadata" poster="videos/katsumata_poster.jpg">
-              <source src="videos/katsumata.mp4" type="video/mp4">
-              お使いのブラウザは動画再生に対応していません。
-            </video></p>
-            <p class="sender">── 勝俣家より</p>
-          </article>
         </div>
       </div>
     </section>
@@ -990,6 +990,13 @@
         <p class="eyebrow reveal-target" style="text-align:center">VIDEO</p>
         <h2 class="section-title reveal-target" id="video-title">ビデオメッセージ</h2>
         <div class="video-frame reveal-target">
+          <video controls playsinline preload="metadata" poster="videos/katsumata_poster.jpg">
+            <source src="videos/katsumata.mp4" type="video/mp4">
+            お使いのブラウザは動画再生に対応していません。
+          </video>
+        </div>
+        <p class="sender reveal-target">── 勝俣家より</p>
+        <div class="video-frame reveal-target is-second">
           <video controls playsinline preload="metadata" poster="videos/message_1_poster.jpg">
             <source src="videos/message_1.mp4" type="video/mp4">
             お使いのブラウザは動画再生に対応していません。
@@ -1022,7 +1029,7 @@
       </div>
       <div class="closing-content reveal-target">
         <h2>末永くお幸せに</h2>
-        <p class="closing-from">勝俣 邦雄・勝俣 公恵<br>勝俣 勉・勝俣 佐和子・勝俣 颯太・勝俣 祐香<br>勝俣 邦広・勝俣 まりか・尊・琳・茅<br>河西 久仁・河西 基彦・河西 直美<br>山森 啓史・萌奈・外川 琴己・穂奈未<br>まる・ふく・てん<br>一同より</p>
+        <p class="closing-from">勝俣 邦雄・勝俣 公恵<br>勝俣 勉・勝俣 佐和子・勝俣 颯太・勝俣 祐香<br>勝俣 邦広・勝俣 麻里加・尊・琳・茅<br>河西 久仁・河西 基彦・河西 直美<br>山森 啓史・萌奈・外川 琴己・穂奈未<br>まる・ふく・てん<br>一同より</p>
         <p class="closing-date"><time datetime="2026-08-16">2026.8.16 お盆に寄せて</time></p>
       </div>
     </footer>
